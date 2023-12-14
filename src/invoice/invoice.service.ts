@@ -88,7 +88,7 @@ export class InvoiceService {
     }
 
     try {
-      return await this.prismaService.invoice.delete({
+      await this.prismaService.invoice.delete({
         where: {
           id,
         },

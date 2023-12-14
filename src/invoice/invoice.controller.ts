@@ -34,7 +34,7 @@ export class InvoiceController {
     return this.invoiceService.updateInvoice(updateInvoiceDto, id);
   }
 
-  @Delete('edit/:id')
+  @Delete('delete/:id')
   delete(@Param('id') id: string) {
     return this.invoiceService.removeInvoice(id);
   }
