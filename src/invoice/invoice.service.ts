@@ -2,6 +2,7 @@ import { PrismaService } from './../prisma/prisma.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { addMonths } from 'date-fns';
+import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 
 @Injectable()
 export class InvoiceService {
@@ -38,5 +39,62 @@ export class InvoiceService {
     const result = await this.prismaService.invoice.findMany();
 
     return result;
+  }
+
+  async getFindId(id: string) {
+    const result = await this.prismaService.invoice.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return result;
+  }
+
+  async updateInvoice(updateInvoiceDto: UpdateInvoiceDto, id: string) {
+    const invoiceExits = await this.prismaService.invoice.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!invoiceExits) {
+      throw new HttpException('Dados não encontados', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      const result = await this.prismaService.invoice.update({
+        where: {
+          id,
+        },
+        data: updateInvoiceDto,
+      });
+
+      return result;
+    } catch (error) {
+      throw new HttpException('Dados não atualizado', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async removeInvoice(id: string) {
+    const invoiceExits = await this.prismaService.invoice.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!invoiceExits) {
+      throw new HttpException('Dados não encontados', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      return await this.prismaService.invoice.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw new HttpException('Dados não atualizado', HttpStatus.BAD_REQUEST);
+    }
   }
 }
